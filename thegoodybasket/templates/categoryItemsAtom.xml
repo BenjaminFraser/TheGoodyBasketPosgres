@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <author>
+        <name>Benjamin Fraser</name>
+    </author>
+    <title type="text">{{category.name}}</title>
+    {% for item in items %}
+    <entry>
+        <title type="text">{{item.name}}</title>
+        <summary type="xhtml">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                <p>ID: <item_id>{{item.id}}</item_id></p>
+                <p>Item: <item>{{item.name}}</item></p>
+                <p>Description: <description>{{item.description}}</description></p>
+                <p>Price: <price>{{item.price}}</price></p>
+                <p>Picture: <picture>{{item.picture}}</picture></p>
+                <p>Category: <category_id>{{item.category_id}}</category_id></p>
+                <p>Creator: <creator>{{item.user_id}}</creator></p>
+            </div>
+        </summary>
+    </entry>
+    {% endfor %}
+</feed>

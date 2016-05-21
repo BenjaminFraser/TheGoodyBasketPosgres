@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+    <author>
+        <name>Benjamin Fraser</name>
+    </author>
+    {% for item in items %}
+    <item id="{{item.id}}">
+        <title type="text">{{item.name}}</title>
+            <item_id>{{item.id}}</item_id>
+            <item_name>{{item.name}}</item_name>
+            <description>{{item.description}}</description>
+            <price>{{item.price}}</price>
+            <picture>{{item.picture}}</picture>
+            <category_id>{{item.category_id}}</category_id>
+            <creator>{{item.user_id}}</creator>
+    </item>
+    {% endfor %}
+</catalog>

@@ -1,0 +1,69 @@
+{% extends "main.html" %}
+{% block content %}
+{% include 'header.html' %}
+    <div class="row divider metallic">
+        <div class="col-md-12"></div>
+    </div>
+    <div class="row banner main">
+        <div class="col-md-1"></div>
+        <div class="col-md-11 padding-none">
+            <h1>Your Account</h1>
+        </div>
+    </div>
+
+<div class = 'flash'>
+              {% with messages = get_flashed_messages() %}
+      {% if messages %}
+    <div class="alert alert-info">
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    </div>
+
+</div>
+    
+    <div class="row padding-top padding-bottom">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 padding-none" id="userDetails">
+            <a href="#">
+                <button class="btn btn-default" id="new-category">
+                    <span class="fa fa-edit" aria-hidden="true"></span> Add A New Profile Picture
+                </button>
+            </a>
+            <a href="#">
+                <button class="btn btn-default" id="new-category">
+                    <span class="fa fa-edit" aria-hidden="true"></span> Edit my details
+                </button>
+            </a>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class="black-text">
+            <div class="row" id="categoryItemSpace">
+                <div class="col-md-1"></div>
+                    <div class="col-md-5 category-list">
+                        <h3>{{user.name}}</h3>
+                        {% if user.picture != None %}
+                                <img src="{{ url_for('static', filename='user_images/' + user.picture) }}" height="400px" width="400px">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='user_images/blank_user.gif') }}" height="300px" width="200px">
+                                {% endif %}
+                    </div>
+                    <div class="col-md-5 category-list">
+                        <div class="border-line">
+                            <h4 class="lead"><u>Email</u></h4>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="border-line">
+                            <h4 class="lead"><u>About Me</u></h4>
+                                    <p>Add a little bit about yourself <a href="#">here!</a></p>
+                        </div>
+                    </div>
+                <div class="col-md-1"></div>
+            </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+    <div class="row divider metallic">
+        <div class="col-md-12"></div>
+    </div>
+    <div class="row banner menu">
+        <div class="col-md-11 col-md-offset-1 padding-none">
+            <h1>Edit Menu Item</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-2 col-offset-6 padding-top">
+
+            <div class="category-item">
+                <h3>Current item image:</h3>
+                {% if item.picture != None %}
+                <img src="{{ url_for('static', filename='item_images/' + item.picture) }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='user_images/blank_user.gif') }}">
+                {% endif %}
+            </div>
+
+            <div class="upload-form padding-top">
+                <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file"><br />
+                    <input type="hidden" name="category_item" value="{{ item.id }}"></input>
+                    <input class="btn btn-primary" type="submit" value="Upload">
+                    <a href="{{ url_for('categoryItems', category_id=category.id)}}" class="btn btn-default delete">
+                    <span class="fa fa-thumbs-o-down" aria-hidden="true"></span> Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

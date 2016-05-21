@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>The Goody Basket</title>
+
+    <!-- Bootstrap basic CSS-->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Flask static styling folder -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Font awesome CSS -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+
+    <!-- Google Custom Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+    </script>
+
+    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+  
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="{{url_for('introPage')}}">
+                    <i class="fa fa-paw"></i>  <span class="light">The</span> <span class="logo-yellow">Goody</span> Basket!
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a href="{{url_for('showCategories')}}">Category list</a>
+                    </li>
+                    <li>
+                        {% if 'username' not in session %}
+                        <a href="{{url_for('loginMenu')}}">Create an account</a>
+                        {% else %}
+                        <a href="{{url_for('disconnect')}}">Logout </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class = 'flash'>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          
+          <ul>
+            {% for message in messages %}
+              <li> <strong> {{ message }} </strong> </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="container content-section">
+
+        <img src="{{ url_for('static', filename='images/welcome.png') }}">
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-offset-3 col-md-offset-1">
+                <div class="container padding-top">
+                    <h3>Login or Signup now with your Google+ or Facebook account</h3>
+                </div>
+            </div>
+        </div>
+
+      <div class="row">
+
+        <div class="col-md-4 col-md-offset-1">
+
+          <div class="container">
+
+            <!-- Google + sign in button -->
+
+            <div id="signInButton">
+            <span class="g-signin"
+                data-scope="openid email"
+                data-clientid="18721200209-q6p2l271bu28d07ji7fqfcbbv8vig24s.apps.googleusercontent.com"
+                data-redirecturi="postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-callback="signInCallback"
+                data-approvalprompt="force">
+            </span>
+            </div>
+
+            <div id="result"></div>
+
+            <!-- Google + sign in button end -->
+
+          </div>
+        </div>
+
+        <div class="col-md-4 col-offset-3">
+
+          <div class ="container">
+
+            <!-- Facebook login button -->
+            <button>
+             
+              <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+              <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+
+              </fb:login-button>
+
+            </button>
+            <!--END FACEBOOK SIGN IN -->
+
+          </div>
+        </div>
+      </div>
+
+        <!-- Footer -->
+        <footer>
+          <div class="container text-center">
+            <p>Copyright &copy; Benjamin D Fraser 2015</p>
+          </div>
+        </footer>
+    </div>
+
+        <!-- GOOGLE + SIGN IN SCRIPT -->
+
+        <script>
+        function signInCallback(authResult) {
+          if (authResult['code']) {
+            // Hide the sign-in button now that the user is authorized
+            $('#signinButton').attr('style', 'display: none');
+            // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main categories page
+            $.ajax({
+              type: 'POST',
+              url: '/gconnect?state={{STATE}}',
+              processData: false,
+              data: authResult['code'],
+              contentType: 'application/octet-stream; charset=utf-8',
+              success: function(result) {
+                // Handle or verify the server response if necessary.
+                if (result) {
+                  $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                 setTimeout(function() {
+                  window.location.href = "/category";
+                 }, 4000);
+                  
+              } else if (authResult['error']) {
+            console.log('There was an error: ' + authResult['error']);
+          } else {
+                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                 }
+              }
+              
+          }); } }
+        </script>
+
+        <!-- GOOGLE + SIGN IN SCRIPT END -->
+
+        <!-- Facebook Login script -->
+
+        <script>
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '505966979611278',
+              cookie     : 'true', // enable cookies so that the server
+                                   // can access the session
+              xfbml      : true,   // parse social plugins on this page
+              version    : 'v2.5'  // use version 2.5
+            });
+          };
+
+          // load the SDK asynchronously
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+
+        function sendTokenToServer() {
+            var access_token = FB.getAuthResponse()['accessToken'];
+            console.log(access_token)
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) {
+              console.log('Successful login for: ' + response.name);
+             $.ajax({
+              type: 'POST',
+              url: '/fbconnect?state={{STATE}}',
+              processData: false,
+              data: access_token,
+              contentType: 'application/octet-stream; charset=utf-8',
+              success: function(result) {
+                // Handle or verify the server response if necessary.
+                if (result) {
+                  $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                 setTimeout(function() {
+                  window.location.href = "/category";
+                 }, 4000);
+                  
+              } else {
+                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                 }
+              }
+              
+          });
+            });
+          }
+
+        </script>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+           
+        <!-- Script to set min height of content to window. -->
+        <script type="text/javascript">
+
+        $(".contentContainer").css("min-height", $(window).height());
+
+        </script>
+
+        <!-- Plugin JavaScript -->
+        <script src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="{{ url_for('static', filename='js/grayscale.js') }}"></script>
+
+    </body>
+</html>

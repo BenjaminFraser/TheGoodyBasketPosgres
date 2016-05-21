@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+   {% for category in categories %}
+   <category id="{{category.id}}">
+         <title type="text">{{category.name}}</title>
+         <category_ident>{{category.id}}</category_ident>
+         <category_name>{{category.name}}</category_name>
+         <category_creator>{{category.user_id}}</category_creator>
+   </category>
+   {% endfor %}
+</catalog>

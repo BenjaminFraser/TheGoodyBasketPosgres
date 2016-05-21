@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% block content %}
+{% include 'header.html' %}
+	<div class="row divider metallic">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row banner main">
+		<div class="col-md-1"></div>
+		<div class="col-md-11 padding-none">
+			<h1>Categories</h1>
+		</div>
+	</div>
+
+<!-- Allow alert notifications through using alert divs -->
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+    <div class="alert alert-info">
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+   	</div>
+
+</div>
+	
+	<div class="row padding-top padding-bottom">
+		<div class="col-md-1"></div>
+		<div class="col-md-10 padding-none" id="addCategoryButton">
+			<a href="{{url_for('newCategory')}}">
+				<button class="btn btn-default" id="new-category">
+					<span class="fa fa-edit" aria-hidden="true"></span> Add Category
+				</button>
+			</a>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+    <!-- Display each category name as a link to its individual category page -->
+	{% for category in categories %}
+		<a href = "{{url_for('categoryItems', category_id = category.id)}}">
+			<div class="row" id="categoryItemSpace">
+				<div class="col-md-1"></div>
+					<div class="col-md-10 category-list">
+						<h3>{{category.name}}</h3>
+					</div>
+                    </a>
+				<div class="col-md-1"></div>
+			</div>
+	{% endfor %}
+{% endblock %}

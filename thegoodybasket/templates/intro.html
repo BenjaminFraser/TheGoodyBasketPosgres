@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>The Goody Basket</title>
+
+    <!-- Bootstrap basic CSS-->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Flask static styling folder -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Font awesome CSS -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+
+    <!-- Google Custom Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+  
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">
+                    <i class="fa fa-shopping-basket"></i>  <span class="light">The</span> <span class="logo-yellow">Goody</span> Basket!
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#categories">Category list</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#create-account">Create an account</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">The Goody Basket</h1>
+                        <p class="intro-text">The platform where users can create and advertise their own categories of products.<br>Powered by the community.</p>
+                        <a href="#about" class="btn btn-circle page-scroll">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h1><i>Welcome<i></h1>
+                <p>The Goody Basket is a reliable, convenient and simple interface through which users can create their very own item category, which contains a set of listed products. There is full CRUD functionality for viewing, editing and deleting individual items, along with whole categories.<br> View the category list at <a href="{{url_for('showCategories')}}">the listings page</a> to get started.
+                </p>
+                <p>There is no long and arduous registration requirement for an account with us, simply use your Google+ or Facebook login and you can be on track to becoming a Goody Basket trader!</p>
+                <p>This platform was build by Benjamin D Fraser using the Flask framework, in conjunction with SQLAlchemy, SQLite, Bootstrap, custom HTML/CSS, JavaScript and Python. Form validation was built using WTForms within Flask.</p>
+                <a href="{{url_for('loginMenu')}}" class="btn btn-default btn-lg">Login to your account</a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Section -->
+    <section id="categories" class="content-section text-center">
+        <div class="categories-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h1>Our Categories</h1>
+                    <p>View our extensive catalog of product categories. We routinely update the category products, so keep an eye out for that something special! You may also create your own category and add individual items once logged in to our system.</p>
+                    <a href="{{ url_for('showCategories') }}" class="btn btn-default btn-lg">Visit Our Categories Page</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Puppies Section -->
+    <section id="create-account" class="content-section text-center">
+        <div class="puppies-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h1>Create an account</h1>
+                    <p>Create your account in seconds securely using your personal Google+ or Facebook account.</p>
+                    <a href="{{ url_for('loginMenu') }}" class="btn btn-default btn-lg">Start Here</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Contact The Goody Basket</h2>
+                <p>Feel free to email us to answer any queries, provide some feedback on our system, give us suggestions for new future features, or to just say hi!</p>
+                <p><a href="mailto:Benjamindfraser@gmail.com">Benjamindfraser@gmail.com</a>
+                </p>
+                <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/BenjaminFraser" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>Copyright &copy; Benjamin D Fraser 2015</p>
+        </div>
+    </footer>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+       
+    <script type="text/javascript">
+
+    $(".contentContainer").css("min-height", $(window).height());
+
+    </script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{{ url_for('static', filename='js/grayscale.js') }}"></script>
+
+</body>
+
+</html>
