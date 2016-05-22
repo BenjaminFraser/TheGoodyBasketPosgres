@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -28,6 +30,14 @@ def allowed_file(filename):
 # Handle a user uploaded file.
 @app.route('/upload', methods=["GET","POST"])
 def upload():
+    """A route to handle the image uploads for the Flask application. Uses the Flask
+        request and werkzeug secure_filename packages and saves the image to the 
+        Flask application UPLOAD_FOLDER directory.
+    Returns: 
+        A redirect to categoryItems after uploading the input file to the UPLOAD_FOLDER.
+    Raises:
+        ValueError: The input upload file was of an invalid type.
+    """
     # Get the name of the uploaded file
     file = request.files['file']
     # Fetch item_id of upload and fetch from DB. 
@@ -52,28 +62,40 @@ def upload():
             # will basicaly show on the browser the uploaded file
             return redirect(url_for('categoryItems',
                                     category_id=category))
+        elif file and not allowed_file(file.filename):
+            raise ValueError("That file type is not allowed!")
 
-# Create route for home page of the app.
 @app.route('/')
 @app.route('/home')
 def introPage():
-    """ Renders the main intro/home page for the goody basket. """
+    """A route to render the main intro/home page for the goody basket when the url_for
+        '/' or '/home' is requested.
+    Returns: 
+        a render_template of the intro.html page.
+    """
     return render_template('intro.html')
 
-# Show all categories
 @app.route('/category/')
 def showCategories():
-    """ Render the main category listings page."""
+    """Render the main category listings page, with categories in 
+        alphabetical order.
+    Returns:
+        A Flask render_template of the categories.html page.
+    """
     categories = session.query(Category).order_by(asc(Category.name))
     if 'username' not in login_session:
         return render_template('categories.html', categories=categories)
     else:
         return render_template('categories.html', categories=categories)
 
-# Create a new category
 @app.route('/category/new/', methods=['GET', 'POST'])
 def newCategory():
-    """ Create a new category for the app, provided the user is logged in."""
+    """ Create a new category for the app, provided the user is logged in.
+    Returns:
+        Redirects the user to the showCategories view if a new category is
+        created, otherwise, a Flask render_template of the newCategory.html
+        form is returned.
+    """
     # redirect to login page if the user is not currently logged in.
     if 'username' not in login_session:
         return redirect('/login')
@@ -88,10 +110,16 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
-# Edit a category
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
-    """ Allow the creator user to edit the category name."""
+    """Allow the creator user to edit the category name, based on category_id.
+    Args:
+        category_id: the unique id that relates to the chosen category in the database.
+    Returns:
+        A redirect to either showCategories, categoryItems, or /login, dependent
+        on login state and authority to edit the category. If the correct user is 
+        logged in and request is GET, returns a Flask render_template of the edit page.
+    """
     editedCategory = session.query(
         Category).filter_by(id=category_id).one()
     # Only allow a logged in user with the correct user id to edit.
@@ -112,11 +140,16 @@ def editCategory(category_id):
     else:
         return render_template('editCategory.html', category=editedCategory)
 
-
-# Delete a category
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
-    """ Delete a category, along with its associated items. """
+    """Delete a category, along with its associated items.
+    Args:
+        category_id: the unique id that relates to the chosen category in the database.
+    Returns:
+        A redirect to either showCategories, categoryItems, or /login, dependent
+        on login state and authority to delete the category. If the correct user is 
+        logged in and request is GET, returns a Flask render_template of the delete page.
+    """
     categoryToDelete = session.query(
         Category).filter_by(id=category_id).one()
     itemsToDelete = session.query(
@@ -172,6 +205,9 @@ def newCategoryItem(category_id):
     if request.method == 'POST':
         newItem = CategoryItem(name=request.form['name'], description=request.form['description'], price=request.form[
                            'price'], category_id=category_id, user_id=category.user_id)
+        # Check new item formatting, and reformat as default dollars if none given.
+        if not newItem.price.startswith(str('$')) or not newItem.price.startswith(str('£')):
+            newItem.price = '$' + newItem.price
         session.add(newItem)
         # Flush and obtain default created item id.
         session.flush()

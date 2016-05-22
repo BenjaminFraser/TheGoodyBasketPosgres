@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

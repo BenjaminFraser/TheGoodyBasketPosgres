@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from thegoodybasket import app
 
 if __name__ == '__main__':
