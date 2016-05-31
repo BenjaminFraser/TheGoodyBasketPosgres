@@ -43,7 +43,6 @@ def requires_login(f):
             flash("You must be logged in to access that!")
             return redirect(url_for('loginMenu', next=request.url))
 
-# Handle a user uploaded file.
 @app.route('/upload', methods=["GET","POST"])
 def upload():
     """A route to handle the image uploads for the Flask application. Uses the Flask
@@ -101,6 +100,7 @@ def showCategories():
     categories = session.query(Category).order_by(asc(Category.name))
     return render_template('categories.html', categories=categories)
 
+@requires_login
 @app.route('/category/new/', methods=['GET', 'POST'])
 def newCategory():
     """ Create a new category for the app, provided the user is logged in.
@@ -109,9 +109,6 @@ def newCategory():
         created, otherwise, a Flask render_template of the newCategory.html
         form is returned.
     """
-    # redirect to login page if the user is not currently logged in.
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         # Create the new category and add the user id as the owner.
         newCategory = Category(
@@ -123,6 +120,7 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
+@requires_login
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
     """Allow the creator user to edit the category name, based on category_id.
@@ -135,9 +133,7 @@ def editCategory(category_id):
     """
     editedCategory = session.query(
         Category).filter_by(id=category_id).one()
-    # Only allow a logged in user with the correct user id to edit.
-    if 'username' not in login_session:
-        return redirect('/login')
+    # only allow the original user to edit the category.
     if editedCategory.user_id != login_session['user_id']:
         flash('You are not authorized to edit this category. Only the category creator may edit.')
         return redirect(url_for('categoryItems', category_id=category_id))
@@ -153,6 +149,7 @@ def editCategory(category_id):
     else:
         return render_template('editCategory.html', category=editedCategory)
 
+@requires_login
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     """Delete a category, along with its associated items.
@@ -168,8 +165,6 @@ def deleteCategory(category_id):
     itemsToDelete = session.query(
         CategoryItem).filter_by(category_id=category_id).all()
     # Only allow the original creator user id to delete the category.
-    if 'username' not in login_session:
-        return redirect('/login')
     if categoryToDelete.user_id != login_session['user_id']:
         flash('You are not authorized to delete this category. Only creators of the category may delete.')
         return redirect(url_for('categoryItems', category_id=category_id))
@@ -204,12 +199,10 @@ def categoryItems(category_id):
         return render_template('categoryItems.html', items=items, category=category, creator=creator)
 
 
-# Create a new category item
+@requires_login
 @app.route('/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newCategoryItem(category_id):
     """ Allow the category creator to create a new item. """
-    if 'username' not in login_session:
-        return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     # Prevent non-creator users adding new items.
     if login_session['user_id'] != category.user_id:
@@ -235,12 +228,10 @@ def newCategoryItem(category_id):
     else:
         return render_template('newCategoryItem.html', category=category)
 
-# Edit a category item
+@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit', methods=['GET', 'POST'])
 def editCategoryItem(category_id, item_id):
     """ Allow the creator to edit the basic item details. """
-    if 'username' not in login_session:
-        return redirect('/login')
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
     # Only allow creator id to edit items.
@@ -262,12 +253,10 @@ def editCategoryItem(category_id, item_id):
     else:
         return render_template('editCategoryItem.html', category=category, item_id=item_id, item=editedItem)
 
-# Edit a category item image
+@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit/img', methods=['GET', 'POST'])
 def editCategoryItemImage(category_id, item_id):
     """ Allows a user to upload a new image, or edit an existing one. """
-    if 'username' not in login_session:
-        return redirect('/login')
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
     if login_session['user_id'] != category.user_id:
@@ -277,12 +266,10 @@ def editCategoryItemImage(category_id, item_id):
     return render_template('editItemPhoto.html', category=category, 
                 item_id=item_id, item=editedItem)
 
-# Delete a category item
+@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteCategoryItem(category_id, item_id):
     """ Allow a creator user to delete the selected item. """
-    if 'username' not in login_session:
-        return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
     if login_session['user_id'] != category.user_id:
@@ -300,10 +287,9 @@ def deleteCategoryItem(category_id, item_id):
         return render_template('deleteCategoryItem.html', item=itemToDelete, category=category)
 
 # Create a user account page to display basic user info.
+@requires_login
 @app.route('/users/account/', methods=['GET', 'POST'])
 def accountInfo():
-    if 'username' not in login_session:
-        return redirect('/login')
     user = session.query(User).filter_by(id=login_session['user_id']).one()
     if user != None:
         return render_template('userAccountPage.html', user=user)
