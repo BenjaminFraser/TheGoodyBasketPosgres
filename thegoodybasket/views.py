@@ -27,6 +27,22 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
+def requires_login(f):
+    """A decorator function for checking whether a user is logged in, 
+        if not, redirects to login page.
+    Args: 
+        f - the function to be decorated
+    Returns:
+        The function as normal if logged in, else redirects user to /login page.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        else:
+            flash("You must be logged in to access that!")
+            return redirect(url_for('loginMenu', next=request.url))
+
 # Handle a user uploaded file.
 @app.route('/upload', methods=["GET","POST"])
 def upload():
@@ -83,10 +99,7 @@ def showCategories():
         A Flask render_template of the categories.html page.
     """
     categories = session.query(Category).order_by(asc(Category.name))
-    if 'username' not in login_session:
-        return render_template('categories.html', categories=categories)
-    else:
-        return render_template('categories.html', categories=categories)
+    return render_template('categories.html', categories=categories)
 
 @app.route('/category/new/', methods=['GET', 'POST'])
 def newCategory():
