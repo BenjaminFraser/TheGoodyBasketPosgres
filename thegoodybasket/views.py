@@ -65,8 +65,7 @@ def upload():
         if file and allowed_file(file.filename):
             # Make the filename safe, remove unsupported chars
             filename = secure_filename(file.filename)
-            # Move the file form the temporal folder to
-            # the upload folder we setup
+            # Move the file form the temporal folder to the upload folder we setup
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # Add the filename to the database item object picture field
             fetched_item.picture = filename
@@ -75,12 +74,15 @@ def upload():
             session.add(fetched_item)
             session.commit()
             flash('Image successfully updated!')
-            # Redirect the user to the uploaded_file route, which
-            # will basicaly show on the browser the uploaded file
+            # Redirect the user to the uploaded_file route.
             return redirect(url_for('categoryItems',
                                     category_id=category))
         elif file and not allowed_file(file.filename):
-            raise ValueError("That file type is not allowed!")
+            flash("That file type is not allowed! Please use an image "
+                    "that is either jpg, png, jpeg or gif!")
+            return redirect(url_for('categoryItems', category_id=category))
+    else:
+        raise ValueError("That item does not exist. The system experienced an error!")
 
 @app.route('/')
 @app.route('/home')
@@ -175,6 +177,10 @@ def deleteCategory(category_id):
         token = login_session.pop('_csrf_token', None)
         if not token or token != request.form.get('_csrf_token'):
             abort(403)
+        # Remove the item images placed within the item_images folder.
+        for item in itemsToDelete:
+            if item.picture:
+                os.remove('thegoodybasket/static/item_images/'+ item.picture)
         session.delete(categoryToDelete)
         # Delete all associated items.
         for item in itemsToDelete:
@@ -280,6 +286,8 @@ def deleteCategoryItem(category_id, item_id):
         token = login_session.pop('_csrf_token', None)
         if not token or token != request.form.get('_csrf_token'):
             abort(403)
+        if itemToDelete.picture:
+            os.remove('thegoodybasket/static/item_images/'+ item.picture)
         session.delete(itemToDelete)
         session.commit()
         flash('Category Item Successfully Deleted')
