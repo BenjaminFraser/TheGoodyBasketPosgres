@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from functools import wraps
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, CategoryItem, User
@@ -42,6 +43,7 @@ def requires_login(f):
         else:
             flash("You must be logged in to access that!")
             return redirect(url_for('loginMenu', next=request.url))
+    return decorated_function
 
 @app.route('/upload', methods=["GET","POST"])
 def upload():
@@ -100,8 +102,8 @@ def showCategories():
     categories = session.query(Category).order_by(asc(Category.name))
     return render_template('categories.html', categories=categories)
 
-@requires_login
 @app.route('/category/new/', methods=['GET', 'POST'])
+@requires_login
 def newCategory():
     """ Create a new category for the app, provided the user is logged in.
     Returns:
@@ -120,8 +122,8 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
-@requires_login
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
+@requires_login
 def editCategory(category_id):
     """Allow the creator user to edit the category name, based on category_id.
     Args:
@@ -149,8 +151,8 @@ def editCategory(category_id):
     else:
         return render_template('editCategory.html', category=editedCategory)
 
-@requires_login
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
+@requires_login
 def deleteCategory(category_id):
     """Delete a category, along with its associated items.
     Args:
@@ -198,9 +200,8 @@ def categoryItems(category_id):
     else:
         return render_template('categoryItems.html', items=items, category=category, creator=creator)
 
-
-@requires_login
 @app.route('/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
+@requires_login
 def newCategoryItem(category_id):
     """ Allow the category creator to create a new item. """
     category = session.query(Category).filter_by(id=category_id).one()
@@ -228,8 +229,8 @@ def newCategoryItem(category_id):
     else:
         return render_template('newCategoryItem.html', category=category)
 
-@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit', methods=['GET', 'POST'])
+@requires_login
 def editCategoryItem(category_id, item_id):
     """ Allow the creator to edit the basic item details. """
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
@@ -253,8 +254,8 @@ def editCategoryItem(category_id, item_id):
     else:
         return render_template('editCategoryItem.html', category=category, item_id=item_id, item=editedItem)
 
-@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit/img', methods=['GET', 'POST'])
+@requires_login
 def editCategoryItemImage(category_id, item_id):
     """ Allows a user to upload a new image, or edit an existing one. """
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
@@ -266,8 +267,8 @@ def editCategoryItemImage(category_id, item_id):
     return render_template('editItemPhoto.html', category=category, 
                 item_id=item_id, item=editedItem)
 
-@requires_login
 @app.route('/category/<int:category_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
+@requires_login
 def deleteCategoryItem(category_id, item_id):
     """ Allow a creator user to delete the selected item. """
     category = session.query(Category).filter_by(id=category_id).one()
@@ -287,8 +288,8 @@ def deleteCategoryItem(category_id, item_id):
         return render_template('deleteCategoryItem.html', item=itemToDelete, category=category)
 
 # Create a user account page to display basic user info.
-@requires_login
 @app.route('/users/account/', methods=['GET', 'POST'])
+@requires_login
 def accountInfo():
     user = session.query(User).filter_by(id=login_session['user_id']).one()
     if user != None:
