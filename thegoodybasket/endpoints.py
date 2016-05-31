@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from flask import Flask, render_template, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,7 +8,7 @@ from flask import session as login_session
 app = Flask(__name__)
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///thegoodybasket.db')
+engine = create_engine('postgresql:///thegoodybasket')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

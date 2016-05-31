@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -18,9 +16,9 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-import thegoodybasket.views
-import thegoodybasket.signin
-import thegoodybasket.endpoints
+from thegoodybasket import views
+from thegoodybasket import signin 
+from thegoodybasket import endpoints
 
 # Generate a random string token for CSRF protection on selected POST views.
 def generate_csrf_token():

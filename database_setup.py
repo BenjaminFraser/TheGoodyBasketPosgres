@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -55,7 +53,7 @@ class CategoryItem(Base):
     price = Column(String(8))
     picture = Column(String(300))
     category_id = Column(Integer,ForeignKey('category.id'))
-    category = relationship(Category)
+    category = relationship("Category", cascade="delete")
     user_id = Column(Integer,ForeignKey('user.id'))
     user = relationship(User)
 
