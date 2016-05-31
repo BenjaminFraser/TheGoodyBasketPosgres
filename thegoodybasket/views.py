@@ -114,13 +114,18 @@ def newCategory():
         form is returned.
     """
     if request.method == 'POST':
-        # Create the new category and add the user id as the owner.
-        newCategory = Category(
-            name=request.form['name'], user_id=login_session['user_id'])
-        session.add(newCategory)
-        flash('New Category %s Successfully Created' % newCategory.name)
-        session.commit()
-        return redirect(url_for('showCategories'))
+        # ensure the selected category name is not already taken.
+        if session.query(Category).filter_by(name=request.form['name']).one_or_none():
+            flash('That category name already exists! Please choose a unique name.')
+            return redirect(url_for('showCategories'))
+        else:
+            # Create the new category and add the user id as the owner.
+            newCategory = Category(
+                name=request.form['name'], user_id=login_session['user_id'])
+            session.add(newCategory)
+            flash('New Category %s Successfully Created' % newCategory.name)
+            session.commit()
+            return redirect(url_for('showCategories'))
     else:
         return render_template('newCategory.html')
 
@@ -287,7 +292,7 @@ def deleteCategoryItem(category_id, item_id):
         if not token or token != request.form.get('_csrf_token'):
             abort(403)
         if itemToDelete.picture:
-            os.remove('thegoodybasket/static/item_images/'+ item.picture)
+            os.remove('thegoodybasket/static/item_images/'+ itemToDelete.picture)
         session.delete(itemToDelete)
         session.commit()
         flash('Category Item Successfully Deleted')
